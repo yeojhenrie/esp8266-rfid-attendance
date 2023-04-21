@@ -3,6 +3,14 @@
 #include <SPI.h>
 #include <MFRC522.h>
 #include <LiquidCrystal_I2C.h>
+#include <RH_ASK.h>
+//RH
+const int BIT_RATE = 500;
+  
+const int RX_PIN = 14, TX_PIN = 0;
+  
+RH_ASK driver(BIT_RATE, RX_PIN, TX_PIN);
+//RH
 #define SS_PIN D8
 #define RST_PIN D0
 int lcdColumns = 16;
@@ -13,13 +21,17 @@ MFRC522::MIFARE_Key key;
 // Init array that will store new NUID
 byte nuidPICC[4];
 void setup() {
+//RH
+  driver.init();  
+//RH
+
   // initialize LCD
   lcd.init();
   // turn on LCD backlight                      
   lcd.backlight();
-lcd.setCursor(0, 0);
+lcd.setCursor(4, 0);
 lcd.clear();
-lcd.print("WELCOEMS");
+lcd.print("WELCOME!");
 delay(1000);
  	Serial.begin(9600);
  	SPI.begin(); // Init SPI bus
@@ -36,6 +48,12 @@ delay(1000);
  	printHex(key.keyByte, MFRC522::MF_KEY_SIZE);
 }
 void loop() {
+  //RH
+  char str[] = "Simples Assim";
+  driver.send((uint8_t *) str, strlen(str));
+  driver.waitPacketSent();
+  delay(1000);  
+  //RH
  	// Reset the loop if no new card present on the sensor/reader. This saves the entire process when idle.
  	if ( ! rfid.PICC_IsNewCardPresent())
  			return;
@@ -48,6 +66,10 @@ void loop() {
 lcd.clear();
 lcd.setCursor(0, 0);
 lcd.print(rfid.PICC_GetTypeName(piccType));
+
+delay(1000);
+lcd.clear();
+lcd.print("TAP YOUR CARD");
  	// Check is the PICC of Classic MIFARE type
  	if (piccType != MFRC522::PICC_TYPE_MIFARE_MINI &&
  					piccType != MFRC522::PICC_TYPE_MIFARE_1K &&
@@ -56,6 +78,9 @@ lcd.print(rfid.PICC_GetTypeName(piccType));
 lcd.clear();
 lcd.setCursor(0, 0);
 lcd.print("Your tag is not of type MIFARE Classic.");
+delay(1000);
+lcd.clear();
+lcd.print("TAP YOUR CARD");
  			return;
  	}
  	if (rfid.uid.uidByte[0] != nuidPICC[0] ||
@@ -66,15 +91,16 @@ lcd.print("Your tag is not of type MIFARE Classic.");
 lcd.clear();
 lcd.setCursor(0, 0);
 lcd.print("A new card has been detected.");
+delay(1000);
+lcd.clear();
+lcd.print("TAP YOUR CARD");
  			// Store NUID into nuidPICC array
  			for (byte i = 0; i < 4; i++) {
  					nuidPICC[i] = rfid.uid.uidByte[i];
  			}
  			Serial.println(F("The NUID tag is:"));
  			Serial.print(F("In hex: "));
-lcd.clear();
-lcd.setCursor(0, 0);
-lcd.print(rfid.uid.uidByte, rfid.uid.size);
+
  			printHex(rfid.uid.uidByte, rfid.uid.size);
  			Serial.println();
  			Serial.print(F("In dec: "));
