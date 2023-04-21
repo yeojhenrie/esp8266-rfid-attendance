@@ -49,10 +49,7 @@ delay(1000);
 }
 void loop() {
   //RH
-  char str[] = "Simples Assim";
-  driver.send((uint8_t *) str, strlen(str));
-  driver.waitPacketSent();
-  delay(1000);  
+  char str[] = "card detected";
   //RH
  	// Reset the loop if no new card present on the sensor/reader. This saves the entire process when idle.
  	if ( ! rfid.PICC_IsNewCardPresent())
@@ -63,6 +60,8 @@ void loop() {
  	Serial.print(F("PICC type: "));
  	MFRC522::PICC_Type piccType = rfid.PICC_GetType(rfid.uid.sak);
  	Serial.println(rfid.PICC_GetTypeName(piccType));
+     driver.send((uint8_t *) str, strlen(str));
+  driver.waitPacketSent();
 lcd.clear();
 lcd.setCursor(0, 0);
 lcd.print(rfid.PICC_GetTypeName(piccType));
