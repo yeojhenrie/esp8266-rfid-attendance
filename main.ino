@@ -48,8 +48,10 @@ delay(1000);
  	printHex(key.keyByte, MFRC522::MF_KEY_SIZE);
 }
 void loop() {
-  //RH
-  char str[] = "card detected";
+  char str[] = "transmit test"
+  driver.send((uint8_t *) str, strlen(str));
+  driver.waitPacketSent();
+  delay(1000);
   //RH
  	// Reset the loop if no new card present on the sensor/reader. This saves the entire process when idle.
  	if ( ! rfid.PICC_IsNewCardPresent())
