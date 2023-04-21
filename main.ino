@@ -7,7 +7,7 @@
 //RH
 const int BIT_RATE = 500;
   
-const int RX_PIN = 14, TX_PIN = 0;
+const int RX_PIN = 14, TX_PIN = 2;
   
 RH_ASK driver(BIT_RATE, RX_PIN, TX_PIN);
 //RH
