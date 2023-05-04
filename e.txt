@@ -28,6 +28,7 @@ void setup() {
   lcd.init();
   lcd.backlight();
   lcd.clear();
+  lcd.setCursor(0, 0);
   lcd.print("WELCOME!");
   delay(1000);
   lcd.clear();
@@ -99,15 +100,17 @@ void loop() {
     Serial.println(mfrc522.GetStatusCodeName(status));
     return;
   }
-
+ lcd.setCursor(0, 0);
   //PRINT FIRST NAME
   for (uint8_t i = 0; i < 16; i++)
   {
     if (buffer1[i] != 32)
     {
+      lcd.print(buffer1[i] );
       Serial.write(buffer1[i]);
     }
   }
+
  driver.send((uint8_t *)buffer1, sizeof(buffer1));
 
   Serial.print(" ");
@@ -130,11 +133,13 @@ void loop() {
     Serial.println(mfrc522.GetStatusCodeName(status));
     return;
   }
-
+   lcd.setCursor(0, 1);
   //PRINT LAST NAME
   for (uint8_t i = 0; i < 16; i++) {
+    lcd.print(buffer2[i] );
     Serial.write(buffer2[i] );
   }
+
    driver.send((uint8_t *)buffer2, sizeof(buffer2));
 
 
